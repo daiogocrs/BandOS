@@ -3,6 +3,14 @@ from app.api import usuarios, auth, bandas, musicas, ensaios, shows, equipamento
 
 app = FastAPI(title="BandOS API", version="1.0.0")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(usuarios.router, prefix="/api/v1/usuarios", tags=["Usuários"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Autenticação"])
 app.include_router(bandas.router, prefix="/api/v1/bandas", tags=["Bandas"])
