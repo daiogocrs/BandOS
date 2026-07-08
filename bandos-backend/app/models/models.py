@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 
@@ -23,6 +23,8 @@ class Banda(Base):
     integrantes = relationship("Integrante", back_populates="banda")
     
     musicas = relationship("Musica", back_populates="banda")
+
+    ensaios = relationship("Ensaio", back_populates="banda")
 
 class Integrante(Base):
     __tablename__ = "integrantes"
@@ -49,3 +51,15 @@ class Musica(Base):
     banda_id = Column(Integer, ForeignKey("bandas.id"))
 
     banda = relationship("Banda", back_populates="musicas")
+
+class Ensaio(Base):
+    __tablename__ = "ensaios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    data_hora = Column(DateTime, nullable=False) 
+    local = Column(String, nullable=False)       
+    descricao = Column(String, nullable=True)   
+    
+    banda_id = Column(Integer, ForeignKey("bandas.id"))
+
+    banda = relationship("Banda", back_populates="ensaios")
