@@ -1,1 +1,8 @@
-from .models import Usuario, Banda, Integrante, Musica, Ensaio
+from .usuario import Usuario
+from .banda import Banda
+from .integrante import Integrante
+from .musica import Musica
+from .ensaio import Ensaio
+from .show import Show
+from .equipamento import Equipamento
+from .enums import EstadoEquipamento
