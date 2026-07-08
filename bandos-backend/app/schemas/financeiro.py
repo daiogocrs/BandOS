@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import date
 from typing import List
 from app.models.enums import TipoTransacao
@@ -16,8 +16,7 @@ class TransacaoResponse(TransacaoBase):
     id: int
     banda_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ResumoFinanceiroResponse(BaseModel):
     total_entradas: float
