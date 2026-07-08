@@ -13,3 +13,5 @@ class Show(Base):
     banda_id = Column(Integer, ForeignKey("bandas.id"), nullable=False)
 
     banda = relationship("Banda", back_populates="shows")
+
+    musicas = relationship("Musica", secondary="show_musicas", back_populates="shows")

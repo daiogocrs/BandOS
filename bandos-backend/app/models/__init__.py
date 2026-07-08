@@ -6,3 +6,4 @@ from .ensaio import Ensaio
 from .show import Show
 from .equipamento import Equipamento
 from .enums import EstadoEquipamento
+from .show_musica import ShowMusica

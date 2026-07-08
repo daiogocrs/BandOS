@@ -19,3 +19,5 @@ class Musica(Base):
     )
 
     banda = relationship("Banda", back_populates="musicas")
+
+    shows = relationship("Show", secondary="show_musicas", back_populates="musicas")
