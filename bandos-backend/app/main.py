@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api import usuarios, auth, bandas, musicas, ensaios
+from app.api import usuarios, auth, bandas, musicas, ensaios, shows, equipamentos
 
 app = FastAPI(title="BandOS API", version="1.0.0")
 
@@ -8,6 +8,8 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["Autenticação"])
 app.include_router(bandas.router, prefix="/api/v1/bandas", tags=["Bandas"])
 app.include_router(musicas.router, prefix="/api/v1", tags=["Repertório"]) 
 app.include_router(ensaios.router, prefix="/api/v1", tags=["Ensaios"])
+app.include_router(shows.router, prefix="/api/v1/shows", tags=["Shows"])
+app.include_router(equipamentos.router, prefix="/api/v1/equipamentos", tags=["Equipamentos"])
 
 @app.get("/")
 def read_root():

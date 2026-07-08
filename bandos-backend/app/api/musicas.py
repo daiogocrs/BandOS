@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.models.models import Usuario, Integrante, Banda
+from app.models import Usuario, Integrante, Banda
 from app.api.deps import obter_usuario_atual
 from app.schemas.musica import MusicaCreate, MusicaResponse
 from app.services import musica as musica_service

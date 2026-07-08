@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.models import Ensaio
+from app.models import Ensaio
 from app.schemas.ensaio import EnsaioCreate
 
 def criar_ensaio(db: Session, ensaio_in: EnsaioCreate, banda_id: int):

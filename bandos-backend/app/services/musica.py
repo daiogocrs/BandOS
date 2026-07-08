@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.models import Musica
+from app.models import Musica
 from app.schemas.musica import MusicaCreate
 
 def criar_musica(db: Session, musica_in: MusicaCreate, banda_id: int):

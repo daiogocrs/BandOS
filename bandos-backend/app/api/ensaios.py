@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db.database import get_db
-from app.models.models import Usuario
+from app.models import Usuario
 from app.api.deps import obter_usuario_atual
 from app.api.musicas import verificar_permissao_banda
 from app.schemas.ensaio import EnsaioCreate, EnsaioResponse

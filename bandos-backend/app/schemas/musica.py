@@ -6,7 +6,7 @@ class MusicaBase(BaseModel):
     artista: Optional[str] = None
     tom: Optional[str] = None
     bpm: Optional[int] = None
-    duracao: Optional[str] = None
+    duracao: Optional[int] = None
 
 class MusicaCreate(MusicaBase):
     pass
