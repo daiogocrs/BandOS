@@ -1,20 +1,26 @@
 # ========================
 # Backend (Python/FastAPI)
 # ========================
+
 bandos-backend/venv/
 bandos-backend/env/
-bandos-backend/__pycache__/
-bandos-backend/*.pyc
 bandos-backend/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
 
 # ========================
 # Frontend (React/Vite)
 # ========================
+
 bandos-frontend/node_modules/
 bandos-frontend/dist/
 bandos-frontend/.env
 
 # ========================
-# Banco de Dados / Docker
+# Docker / Banco
 # ========================
+
 postgres_data/
