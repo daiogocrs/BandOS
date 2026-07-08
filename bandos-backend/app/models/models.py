@@ -21,6 +21,8 @@ class Banda(Base):
     descricao = Column(String, nullable=True)
 
     integrantes = relationship("Integrante", back_populates="banda")
+    
+    musicas = relationship("Musica", back_populates="banda")
 
 class Integrante(Base):
     __tablename__ = "integrantes"
@@ -33,3 +35,17 @@ class Integrante(Base):
 
     usuario = relationship("Usuario", back_populates="integrantes")
     banda = relationship("Banda", back_populates="integrantes")
+
+class Musica(Base):
+    __tablename__ = "musicas"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String, nullable=False, index=True)
+    artista = Column(String, nullable=True) 
+    tom = Column(String, nullable=True)     
+    bpm = Column(Integer, nullable=True)    
+    duracao = Column(String, nullable=True) 
+    
+    banda_id = Column(Integer, ForeignKey("bandas.id"))
+
+    banda = relationship("Banda", back_populates="musicas")

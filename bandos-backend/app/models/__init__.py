@@ -1,1 +1,1 @@
-from .models import Usuario, Banda, Integrante
+from .models import Usuario, Banda, Integrante, Musica
