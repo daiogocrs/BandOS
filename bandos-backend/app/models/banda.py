@@ -38,3 +38,9 @@ class Banda(Base):
         back_populates="banda",
         cascade="all, delete-orphan",
     )
+
+    transacoes = relationship(
+        "Transacao", 
+        back_populates="banda", 
+        cascade="all, delete-orphan"
+    )
