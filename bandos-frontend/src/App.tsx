@@ -4,6 +4,7 @@ import { Registro } from './pages/Registro'
 import { Dashboard } from './pages/Dashboard'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
+import { LayoutLogado } from './components/LayoutLogado'
 
 function App() {
   return (
@@ -13,16 +14,17 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
           
           <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} /> 
+          <Route path="/registro" element={<Registro />} />
           
           <Route 
-            path="/dashboard" 
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <LayoutLogado />
               </ProtectedRoute>
-            } 
-          />
+            }
+          >
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
