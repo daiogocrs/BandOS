@@ -15,7 +15,8 @@ def criar_banda(db: Session, banda_in: BandaCreate, usuario_criador: Usuario):
     administrador = Integrante(
         usuario_id=usuario_criador.id,
         banda_id=nova_banda.id,
-        funcao="Administrador"
+        papel="admin",
+        funcao=None  
     )
 
     db.add(administrador)

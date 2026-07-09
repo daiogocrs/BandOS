@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { LayoutLogado } from './components/LayoutLogado'
 import { BandaProvider } from './contexts/BandaContext'
 import { Repertorio } from './pages/Repertorio' 
+import { Integrantes } from './pages/Integrantes'
 
 function App() {
   return (
@@ -20,10 +21,11 @@ function App() {
             <Route path="/registro" element={<Registro />} />
 
             <Route element={<ProtectedRoute><LayoutLogado /></ProtectedRoute>}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/bandas" element={<Bandas />} />
-              <Route path="/repertorio" element={<Repertorio />} /> 
-            </Route>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/bandas" element={<Bandas />} />
+            <Route path="/repertorio" element={<Repertorio />} />
+            <Route path="/integrantes" element={<Integrantes />} /> 
+          </Route>
 
           </Routes>
         </BandaProvider> 

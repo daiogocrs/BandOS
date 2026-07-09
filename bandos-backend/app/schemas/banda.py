@@ -1,18 +1,33 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import Optional
+
+# ==========================================
+# SCHEMAS DE INTEGRANTE
+# ==========================================
 
 class IntegranteBase(BaseModel):
     funcao: str
+    papel: str = "membro" 
 
-class IntegranteCreate(IntegranteBase):
-    usuario_id: int
+class IntegranteCreate(BaseModel):
+    email: EmailStr
+    papel: str = "membro"
+    funcao: str
 
-class IntegranteResponse(IntegranteBase):
+class IntegranteResponse(BaseModel):
     id: int
     usuario_id: int
-    banda_id: int
+    nome_usuario: str
+    email_usuario: str
+    papel: str
+    funcao: str
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# ==========================================
+# SCHEMAS DE BANDA
+# ==========================================
 
 class BandaBase(BaseModel):
     nome: str

@@ -18,17 +18,18 @@ def criar_nova_banda(
     return banda_service.criar_banda(db=db, banda_in=banda_in, usuario_criador=usuario_atual)
 
 @router.post("/{banda_id}/integrantes", response_model=IntegranteResponse, status_code=status.HTTP_201_CREATED)
-def vincular_integrante(
-    banda_id: int,
-    integrante_in: IntegranteCreate,
+def adicionar_integrante(
+    banda_id: int, 
+    integrante_in: IntegranteCreate, 
     db: Session = Depends(get_db),
     usuario_atual: Usuario = Depends(obter_usuario_atual)
 ):
-    
+    # 1. Verificar se a banda existe
     banda = db.query(Banda).filter(Banda.id == banda_id).first()
     if not banda:
         raise HTTPException(status_code=404, detail="Banda não encontrada")
-        
+
+    # 2. Verificar se quem adiciona é membro/admin da banda (Sua lógica de segurança)
     e_membro = db.query(Integrante).filter(
         Integrante.banda_id == banda_id,
         Integrante.usuario_id == usuario_atual.id
@@ -37,17 +38,44 @@ def vincular_integrante(
     if not e_membro:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
-            detail="Acesso negado. Apenas membros desta banda podem adicionar integrantes."
+            detail="Acesso negado."
         )
 
-    ja_existe = db.query(Integrante).filter(
-        Integrante.banda_id == banda_id,
-        Integrante.usuario_id == integrante_in.usuario_id
-    ).first()
-    if ja_existe:
-        raise HTTPException(status_code=400, detail="Este utilizador já integra a banda.")
+    # 3. Procurar o utilizador pelo Email fornecido
+    usuario_convidado = db.query(Usuario).filter(Usuario.email == integrante_in.email).first()
+    if not usuario_convidado:
+        raise HTTPException(status_code=404, detail="Utilizador não encontrado.")
 
-    return banda_service.adicionar_integrante(db=db, banda_id=banda_id, integrante_in=integrante_in)
+    # 4. Verificar se o utilizador já está na banda
+    ja_na_banda = db.query(Integrante).filter(
+        Integrante.banda_id == banda_id,
+        Integrante.usuario_id == usuario_convidado.id
+    ).first()
+    
+    if ja_na_banda:
+        raise HTTPException(status_code=400, detail="Este utilizador já faz parte da banda.")
+
+    # 5. Criar a ligação
+    novo_integrante = Integrante(
+        usuario_id=usuario_convidado.id,
+        banda_id=banda_id,
+        papel=integrante_in.papel,
+        funcao=integrante_in.funcao
+    )
+    
+    db.add(novo_integrante)
+    db.commit()
+    db.refresh(novo_integrante) # Importante para carregar o ID
+    
+    # Retornar o formato esperado pelo IntegranteResponse
+    return {
+        "id": novo_integrante.id,
+        "usuario_id": novo_integrante.usuario_id,
+        "nome_usuario": usuario_convidado.nome,
+        "email_usuario": usuario_convidado.email,
+        "papel": novo_integrante.papel,
+        "funcao": novo_integrante.funcao
+    }
 
 @router.get("/", response_model=List[BandaResponse])
 def listar_bandas(
@@ -59,3 +87,26 @@ def listar_bandas(
     """Lista todas as bandas."""
     bandas = banda_service.listar_bandas(db=db, usuario=usuario_atual, skip=skip, limit=limit)
     return bandas
+
+@router.get("/{banda_id}/integrantes")
+def listar_integrantes(
+    banda_id: int,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
+    # Procura todos os integrantes desta banda
+    integrantes_db = db.query(Integrante).filter(Integrante.banda_id == banda_id).all()
+    
+    # Formata a resposta misturando os dados do Integrante com os dados do Utilizador (Usuario)
+    lista_resposta = []
+    for intg in integrantes_db:
+        lista_resposta.append({
+            "id": intg.id,
+            "usuario_id": intg.usuario_id,
+            "nome_usuario": intg.usuario.nome,  
+            "email_usuario": intg.usuario.email, 
+            "papel": intg.papel,
+            "funcao": intg.funcao
+        })
+        
+    return lista_resposta

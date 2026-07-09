@@ -22,17 +22,27 @@ export function BandaProvider({ children }: { children: ReactNode }) {
   const [bandaAtual, setBandaAtual] = useState<Banda | null>(null)
 
   const recarregarBandas = async () => {
-    if (!isAuthenticated) return
+    if (!isAuthenticated) {
+      setBandas([])
+      setBandaAtual(null)
+      return
+    }
+
     try {
-      const response = await api.get('/api/v1/bandas/')
-      const listaBandas = response.data
-      setBandas(listaBandas)
-      
-      if (listaBandas.length > 0 && !bandaAtual) {
-        setBandaAtual(listaBandas[0])
+      const response = await api.get("/api/v1/bandas")
+
+      const lista = response.data
+
+      setBandas(lista)
+
+      if (lista.length > 0) {
+        setBandaAtual(lista[0])
+      } else {
+        setBandaAtual(null)
       }
+
     } catch (error) {
-      console.error("Erro ao carregar bandas no contexto:", error)
+      console.error(error)
     }
   }
 
