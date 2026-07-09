@@ -9,6 +9,7 @@ import { LayoutLogado } from './components/LayoutLogado'
 import { BandaProvider } from './contexts/BandaContext'
 import { Repertorio } from './pages/Repertorio' 
 import { Integrantes } from './pages/Integrantes'
+import { Ensaios } from './pages/Ensaios'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="/bandas" element={<Bandas />} />
             <Route path="/repertorio" element={<Repertorio />} />
             <Route path="/integrantes" element={<Integrantes />} /> 
+            <Route path="/ensaios" element={<Ensaios />} />
           </Route>
 
           </Routes>
