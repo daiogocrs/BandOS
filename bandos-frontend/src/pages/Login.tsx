@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
+import { useAuth } from '../contexts/AuthContext'
+import { useNavigate, Link } from 'react-router-dom'
 
 export function Login() {
     const [email, setEmail] = useState('')
@@ -8,6 +9,7 @@ export function Login() {
     const [erro, setErro] = useState('')
 
     const navigate = useNavigate()
+    const { login } = useAuth()
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -18,15 +20,19 @@ export function Login() {
             formData.append('username', email)
             formData.append('password', password)
 
-            const response = await api.post('/api/v1/auth/login', formData)
+            const response = await api.post('/api/v1/auth/login', formData, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
 
             const token = response.data.access_token
-            localStorage.setItem('@BandOS:token', token)
-
+            
+            login(token) 
             navigate('/dashboard')
 
         } catch (error) {
-            console.error(error)
+            console.error("Erro no login:", error)
             setErro('Credenciais inválidas. Tente novamente.')
         }
     }
@@ -77,7 +83,15 @@ export function Login() {
                     >
                         Entrar
                     </button>
+
                 </form>
+
+                <div className="mt-4 text-center text-sm text-zinc-400">
+                    Ainda não tem uma banda?{' '}
+                    <Link to="/registro" className="text-emerald-500 hover:underline">
+                        Crie sua conta
+                    </Link>
+                </div>
             </div>
         </div>
     )

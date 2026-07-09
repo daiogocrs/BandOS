@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 class IntegranteBase(BaseModel):
@@ -12,8 +12,7 @@ class IntegranteResponse(IntegranteBase):
     usuario_id: int
     banda_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class BandaBase(BaseModel):
     nome: str
@@ -25,5 +24,4 @@ class BandaCreate(BandaBase):
 class BandaResponse(BandaBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

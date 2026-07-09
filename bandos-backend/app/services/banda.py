@@ -28,3 +28,7 @@ def adicionar_integrante(db: Session, banda_id: int, integrante_in: IntegranteCr
     db.commit()
     db.refresh(novo_integrante)
     return novo_integrante
+
+def listar_bandas(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Banda).offset(skip).limit(limit).all()
+    

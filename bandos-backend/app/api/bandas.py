@@ -5,6 +5,7 @@ from app.models import Usuario, Banda, Integrante
 from app.api.deps import obter_usuario_atual
 from app.schemas.banda import BandaCreate, BandaResponse, IntegranteCreate, IntegranteResponse
 from app.services import banda as banda_service
+from typing import List
 
 router = APIRouter()
 
@@ -47,3 +48,14 @@ def vincular_integrante(
         raise HTTPException(status_code=400, detail="Este utilizador já integra a banda.")
 
     return banda_service.adicionar_integrante(db=db, banda_id=banda_id, integrante_in=integrante_in)
+
+@router.get("/", response_model=List[BandaResponse])
+def listar_bandas(
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
+    """Lista todas as bandas."""
+    bandas = banda_service.listar_bandas(db=db, skip=skip, limit=limit)
+    return bandas
