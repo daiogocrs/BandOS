@@ -117,7 +117,6 @@ export function Bandas() {
                                 </p>
                             </div>
                             <div className="mt-6 pt-4 border-t border-zinc-700">
-                                {/* Substitua o botão estático por este: */}
                                 <button
                                     onClick={() => {
                                         selecionarBanda(banda.id)
