@@ -1,20 +1,56 @@
 # ========================
-# Backend (Python/FastAPI)
+# Python
 # ========================
-bandos-backend/venv/
-bandos-backend/env/
-bandos-backend/__pycache__/
-bandos-backend/*.pyc
-bandos-backend/.env
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Ambientes virtuais
+venv/
+env/
+.venv/
+
+# Variáveis de ambiente
+.env
+.env.*
+
+# Alembic
+alembic/versions/__pycache__/
+
+# Pytest
+.pytest_cache/
+
+# MyPy
+.mypy_cache/
+
+# Ruff
+.ruff_cache/
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
 
 # ========================
-# Frontend (React/Vite)
+# Frontend
 # ========================
-bandos-frontend/node_modules/
-bandos-frontend/dist/
-bandos-frontend/.env
+
+node_modules/
+dist/
+coverage/
 
 # ========================
-# Banco de Dados / Docker
+# Docker
 # ========================
+
 postgres_data/
+
+# ========================
+# Sistema
+# ========================
+
+.DS_Store
+Thumbs.db
