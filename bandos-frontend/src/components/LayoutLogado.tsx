@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Outlet, NavLink } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
+import { useBanda } from '../contexts/BandaContext'
 import {
     LayoutDashboard,
     Users,
@@ -32,9 +33,9 @@ const customScrollbar = "[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-trac
 
 export function LayoutLogado() {
     const { logout } = useAuth()
+    const { bandas, bandaAtual, selecionarBanda } = useBanda()
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isMobileOpen, setIsMobileOpen] = useState(false)
-    const [bandaAtual, setBandaAtual] = useState('1')
     const [nomeUsuario, setNomeUsuario] = useState('Perfil')
 
     useEffect(() => {
@@ -127,12 +128,18 @@ export function LayoutLogado() {
                     <div className="bg-zinc-900 border border-zinc-800 p-2 rounded-md">
                         <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Banda Atual</label>
                         <select
-                            value={bandaAtual}
-                            onChange={(e) => setBandaAtual(e.target.value)}
-                            className="bg-transparent text-sm font-medium w-full text-zinc-200 focus:outline-none"
+                            value={bandaAtual?.id || ''}
+                            onChange={(e) => selecionarBanda(Number(e.target.value))}
+                            className="bg-transparent text-xs font-semibold w-full text-zinc-200 focus:outline-none cursor-pointer"
                         >
-                            <option value="1" className="bg-zinc-900 text-zinc-100">Minha Banda 🎸</option>
-                            <option value="2" className="bg-zinc-900 text-zinc-100">Projeto Acústico 🎤</option>
+                            {bandas.length === 0 && (
+                                <option value="" className="bg-zinc-900 text-zinc-100">Nenhuma banda</option>
+                            )}
+                            {bandas.map(banda => (
+                                <option key={banda.id} value={banda.id} className="bg-zinc-900 text-zinc-100">
+                                    {banda.nome}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
@@ -184,12 +191,18 @@ export function LayoutLogado() {
                             <>
                                 <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-0.5">Banda Atual</label>
                                 <select
-                                    value={bandaAtual}
-                                    onChange={(e) => setBandaAtual(e.target.value)}
+                                    value={bandaAtual?.id || ''}
+                                    onChange={(e) => selecionarBanda(Number(e.target.value))}
                                     className="bg-transparent text-xs font-semibold w-full text-zinc-200 focus:outline-none cursor-pointer"
                                 >
-                                    <option value="1" className="bg-zinc-900 text-zinc-100">Minha Banda 🎸</option>
-                                    <option value="2" className="bg-zinc-900 text-zinc-100">Projeto Acústico 🎤</option>
+                                    {bandas.length === 0 && (
+                                        <option value="" className="bg-zinc-900 text-zinc-100">Nenhuma banda</option>
+                                    )}
+                                    {bandas.map(banda => (
+                                        <option key={banda.id} value={banda.id} className="bg-zinc-900 text-zinc-100">
+                                            {banda.nome}
+                                        </option>
+                                    ))}
                                 </select>
                             </>
                         )}
