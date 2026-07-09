@@ -6,19 +6,33 @@ DADOS_USUARIO = {
     "senha": "wearethechampions"
 }
 
+DADOS_USUARIO2 = {
+    "nome": "Kurt Cobain",
+    "email": "kurt@nirvana.com",
+    "senha": "nirvana"
+}
+
 DADOS_BANDA = {
     "nome": "Queen",
     "descricao": "Banda britânica de rock"
 }
 
-def obter_token_auth(client):
-    """Função auxiliar para criar um utilizador e fazer login, retornando o token JWT."""
-    client.post("/api/v1/usuarios/", json=DADOS_USUARIO)
-    resposta_login = client.post(
-        "/api/v1/auth/login", 
-        data={"username": DADOS_USUARIO["email"], "password": DADOS_USUARIO["senha"]}
+def obter_token_auth(client, dados_usuario=DADOS_USUARIO):
+
+    client.post(
+        "/api/v1/usuarios/",
+        json=dados_usuario
     )
-    return resposta_login.json()["access_token"]
+
+    resposta = client.post(
+        "/api/v1/auth/login",
+        data={
+            "username": dados_usuario["email"],
+            "password": dados_usuario["senha"]
+        }
+    )
+
+    return resposta.json()["access_token"]
 
 def test_criar_banda_sem_autenticacao(client):
     """Garante que um utilizador anônimo não consegue criar uma banda."""
@@ -41,18 +55,56 @@ def test_criar_banda_com_sucesso(client):
     assert dados["descricao"] == DADOS_BANDA["descricao"]
     assert "id" in dados
 
-def test_listar_bandas(client):
-    """Testa se a banda criada aparece na lista geral."""
+def test_usuario_lista_apenas_suas_bandas(client):
+
     token = obter_token_auth(client)
-    headers = {"Authorization": f"Bearer {token}"}
-    
-    client.post("/api/v1/bandas/", json=DADOS_BANDA, headers=headers)
-    
-    response = client.get("/api/v1/bandas/", headers=headers)
-    
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    client.post(
+        "/api/v1/bandas/",
+        json=DADOS_BANDA,
+        headers=headers
+    )
+
+    response = client.get(
+        "/api/v1/bandas/",
+        headers=headers
+    )
+
     assert response.status_code == 200
-    lista_bandas = response.json()
-    
-    assert isinstance(lista_bandas, list)
-    assert len(lista_bandas) > 0
-    assert lista_bandas[0]["nome"] == DADOS_BANDA["nome"]
+
+    bandas = response.json()
+
+    assert len(bandas) == 1
+    assert bandas[0]["nome"] == "Queen"
+
+def test_usuario_nao_ve_bandas_de_outros(client):
+
+    token1 = obter_token_auth(client)
+
+    headers1 = {
+        "Authorization": f"Bearer {token1}"
+    }
+
+    client.post(
+        "/api/v1/bandas/",
+        json=DADOS_BANDA,
+        headers=headers1
+    )
+
+    token2 = obter_token_auth(client, DADOS_USUARIO2)
+
+    headers2 = {
+        "Authorization": f"Bearer {token2}"
+    }
+
+    response = client.get(
+        "/api/v1/bandas/",
+        headers=headers2
+    )
+
+    assert response.status_code == 200
+    assert response.json() == []

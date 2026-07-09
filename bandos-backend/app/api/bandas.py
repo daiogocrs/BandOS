@@ -57,5 +57,5 @@ def listar_bandas(
     usuario_atual: Usuario = Depends(obter_usuario_atual)
 ):
     """Lista todas as bandas."""
-    bandas = banda_service.listar_bandas(db=db, skip=skip, limit=limit)
+    bandas = banda_service.listar_bandas(db=db, usuario=usuario_atual, skip=skip, limit=limit)
     return bandas
