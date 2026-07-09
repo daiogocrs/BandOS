@@ -19,14 +19,12 @@ export function Shows() {
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState('')
 
-  // Estados do Modal
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [dataHora, setDataHora] = useState('')
   const [local, setLocal] = useState('')
   const [descricao, setDescricao] = useState('')
   const [salvando, setSalvando] = useState(false)
 
-  // Separar shows futuros de shows passados
   const showsFuturos = shows.filter(show => new Date(show.data_hora).getTime() >= new Date().getTime())
   const showsPassados = shows.filter(show => new Date(show.data_hora).getTime() < new Date().getTime())
 
@@ -37,10 +35,8 @@ export function Shows() {
       setLoading(true)
       setErro('')
       try {
-        // Baseado no test_listar_shows: client.get(f"/api/v1/shows/{banda_id}")
         const response = await api.get(`/api/v1/shows/${bandaAtual.id}`)
         
-        // Ordenar do mais próximo para o mais distante
         const showsOrdenados = response.data.sort((a: Show, b: Show) => 
           new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime()
         )
@@ -64,20 +60,17 @@ export function Shows() {
     setSalvando(true)
     setErro('')
     try {
-      // Baseado no test_criar_show_sucesso: client.post(f"/api/v1/shows/{banda_id}")
       await api.post(`/api/v1/shows/${bandaAtual.id}`, {
         data_hora: dataHora,
         local,
         descricao
       })
       
-      // Limpa e fecha
       setDataHora('')
       setLocal('')
       setDescricao('')
       setIsModalOpen(false)
       
-      // Recarrega a lista
       const response = await api.get(`/api/v1/shows/${bandaAtual.id}`)
       setShows(response.data.sort((a: Show, b: Show) => 
         new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime()
@@ -90,7 +83,6 @@ export function Shows() {
     }
   }
 
-  // Componente interno para renderizar o Card do Show
   const ShowCard = ({ show, passado = false }: { show: Show, passado?: boolean }) => (
     <div className={`bg-zinc-800 border ${passado ? 'border-zinc-800 opacity-60' : 'border-zinc-700 hover:border-emerald-500/50'} p-5 rounded-lg flex flex-col md:flex-row md:items-center gap-4 transition-colors`}>
       
@@ -178,7 +170,6 @@ export function Shows() {
       ) : (
         <div className="space-y-8">
           
-          {/* SECÇÃO: Próximos Shows */}
           {showsFuturos.length > 0 && (
             <section>
               <h2 className="text-xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
@@ -190,7 +181,6 @@ export function Shows() {
             </section>
           )}
 
-          {/* SECÇÃO: Histórico (Shows Passados) */}
           {showsPassados.length > 0 && (
             <section>
               <h2 className="text-xl font-bold text-zinc-500 mb-4 border-t border-zinc-800 pt-8">Histórico de Concertos</h2>
@@ -203,7 +193,6 @@ export function Shows() {
         </div>
       )}
 
-      {/* Modal de Agendamento */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
           <div className="bg-zinc-900 border border-zinc-800 rounded-lg w-full max-w-md p-6 shadow-2xl relative">
