@@ -19,7 +19,6 @@ export function Repertorio() {
     const [loading, setLoading] = useState(false)
     const [busca, setBusca] = useState('')
 
-    // Estados do Modal
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [nome, setNome] = useState('')
     const [artista, setArtista] = useState('')
@@ -133,7 +132,6 @@ export function Repertorio() {
 
     return (
         <div className="max-w-5xl mx-auto">
-            {/* Cabeçalho */}
             <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-zinc-100 flex items-center gap-3">
@@ -154,7 +152,6 @@ export function Repertorio() {
                 </button>
             </header>
 
-            {/* Barra de Pesquisa */}
             <div className="bg-zinc-800/50 border border-zinc-800 rounded-lg p-4 mb-6 flex items-center gap-3">
                 <Search className="text-zinc-500 h-5 w-5" />
                 <input
@@ -166,7 +163,6 @@ export function Repertorio() {
                 />
             </div>
 
-            {/* Lista de Músicas */}
             {loading ? (
                 <div className="text-center py-20 text-emerald-500 animate-pulse">A afinar as guitarras... 🎸</div>
             ) : musicasFiltradas.length === 0 ? (
@@ -207,7 +203,6 @@ export function Repertorio() {
                 </div>
             )}
 
-            {/* Modal de Nova Música */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
                     <div className="bg-zinc-900 border border-zinc-800 rounded-lg w-full max-w-md p-6 shadow-2xl relative">
