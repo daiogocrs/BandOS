@@ -8,8 +8,8 @@ interface Integrante {
   usuario_id: number
   nome_usuario: string
   email_usuario: string
-  papel: string // ex: 'admin' ou 'membro'
-  funcao: string // ex: 'Guitarrista', 'Vocalista'
+  papel: string 
+  funcao: string 
 }
 
 export function Integrantes() {
@@ -17,7 +17,6 @@ export function Integrantes() {
   const [integrantes, setIntegrantes] = useState<Integrante[]>([])
   const [loading, setLoading] = useState(false)
 
-  // Estados do Modal de Adicionar Integrante
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [emailNovo, setEmailNovo] = useState('')
   const [papelNovo, setPapelNovo] = useState('membro')
@@ -31,7 +30,6 @@ export function Integrantes() {
       
       setLoading(true)
       try {
-        // Ajuste a rota se o seu backend for diferente!
         const response = await api.get(`/api/v1/bandas/${bandaAtual.id}/integrantes`)
         setIntegrantes(response.data)
       } catch (error) {
@@ -52,23 +50,20 @@ export function Integrantes() {
     setSalvando(true)
     try {
       await api.post(`/api/v1/bandas/${bandaAtual.id}/integrantes`, {
-        email: emailNovo, // Presumindo que você convida a pessoa pelo email de cadastro dela
-        papel: papelNovo, // Cargo no sistema
-        funcao: funcaoNova // Instrumento/Função na banda
+        email: emailNovo, 
+        papel: papelNovo, 
+        funcao: funcaoNova
       })
       
-      // Limpa form e fecha modal
       setEmailNovo('')
       setPapelNovo('membro')
       setFuncaoNova('')
       setIsModalOpen(false)
       
-      // Recarrega a lista
       const response = await api.get(`/api/v1/bandas/${bandaAtual.id}/integrantes`)
       setIntegrantes(response.data)
     } catch (error: any) {
       console.error("Erro ao adicionar integrante:", error)
-      // Se o backend retornar um erro específico (ex: "Usuário não encontrado"), mostramos aqui
       setErro(error.response?.data?.detail || "Erro ao adicionar integrante. Verifique se o e-mail está cadastrado no BandOS.")
     } finally {
       setSalvando(false)
@@ -86,7 +81,6 @@ export function Integrantes() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      {/* Cabeçalho */}
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-zinc-100 flex items-center gap-3">
@@ -107,7 +101,6 @@ export function Integrantes() {
         </button>
       </header>
 
-      {/* Lista de Integrantes */}
       {loading ? (
         <div className="text-center py-20 text-emerald-500 animate-pulse">A procurar a malta... 🥁</div>
       ) : integrantes.length === 0 ? (
@@ -119,7 +112,6 @@ export function Integrantes() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {integrantes.map(integrante => (
             <div key={integrante.id} className="bg-zinc-800 border border-zinc-700 hover:border-emerald-500/50 p-5 rounded-lg flex items-center gap-4 transition-colors group">
-              {/* Avatar Simples */}
               <div className="h-12 w-12 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-emerald-500 font-bold shrink-0">
                 {integrante.nome_usuario?.charAt(0).toUpperCase() || 'U'}
               </div>
@@ -144,7 +136,6 @@ export function Integrantes() {
         </div>
       )}
 
-      {/* Modal de Novo Integrante */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
           <div className="bg-zinc-900 border border-zinc-800 rounded-lg w-full max-w-md p-6 shadow-2xl relative">

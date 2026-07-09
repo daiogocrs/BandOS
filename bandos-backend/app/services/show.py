@@ -1,12 +1,19 @@
 from sqlalchemy.orm import Session
 from app.models import Show
 from app.schemas.show import ShowCreate
+from fastapi import HTTPException, status
+from datetime import datetime, timezone
 
-def criar_show(db: Session, show: ShowCreate, banda_id: int):
+def criar_show(db: Session, show_in: ShowCreate, banda_id: int):
+    if show_in.data_hora.replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Não é possível agendar um show no passado."
+        )
     db_show = Show(
-        data_hora=show.data_hora,
-        local=show.local,
-        descricao=show.descricao,
+        data_hora=show_in.data_hora,
+        local=show_in.local,
+        descricao=show_in.descricao,
         banda_id=banda_id
     )
     

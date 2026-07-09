@@ -10,6 +10,7 @@ import { BandaProvider } from './contexts/BandaContext'
 import { Repertorio } from './pages/Repertorio' 
 import { Integrantes } from './pages/Integrantes'
 import { Ensaios } from './pages/Ensaios'
+import { Shows } from './pages/Shows'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/repertorio" element={<Repertorio />} />
             <Route path="/integrantes" element={<Integrantes />} /> 
             <Route path="/ensaios" element={<Ensaios />} />
+            <Route path="/shows" element={<Shows />} />
           </Route>
 
           </Routes>

@@ -15,7 +15,7 @@ router = APIRouter()
 @router.post("/{banda_id}", response_model=ShowResponse, status_code=status.HTTP_201_CREATED)
 def criar_show(
     banda_id: int, 
-    show: ShowCreate, 
+    show_in: ShowCreate, 
     db: Session = Depends(get_db), 
     usuario_atual: Usuario = Depends(obter_usuario_atual)
 ):
@@ -23,7 +23,7 @@ def criar_show(
     Cria um novo show para uma banda específica.
     Protegido: Apenas utilizadores autenticados.
     """
-    return show_service.criar_show(db=db, show=show, banda_id=banda_id)
+    return show_service.criar_show(db=db, show_in=show_in, banda_id=banda_id)
 
 @router.get("/{banda_id}", response_model=List[ShowResponse])
 def listar_shows(
