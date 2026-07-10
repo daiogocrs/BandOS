@@ -31,16 +31,16 @@ export function Shows() {
   useEffect(() => {
     async function carregarShows() {
       if (!bandaAtual) return
-      
+
       setLoading(true)
       setErro('')
       try {
         const response = await api.get(`/api/v1/shows/${bandaAtual.id}`)
-        
-        const showsOrdenados = response.data.sort((a: Show, b: Show) => 
+
+        const showsOrdenados = response.data.sort((a: Show, b: Show) =>
           new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime()
         )
-        
+
         setShows(showsOrdenados)
       } catch (error) {
         console.error("Erro ao carregar shows:", error)
@@ -65,14 +65,14 @@ export function Shows() {
         local,
         descricao
       })
-      
+
       setDataHora('')
       setLocal('')
       setDescricao('')
       setIsModalOpen(false)
-      
+
       const response = await api.get(`/api/v1/shows/${bandaAtual.id}`)
-      setShows(response.data.sort((a: Show, b: Show) => 
+      setShows(response.data.sort((a: Show, b: Show) =>
         new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime()
       ))
     } catch (error: any) {
@@ -85,7 +85,7 @@ export function Shows() {
 
   const ShowCard = ({ show, passado = false }: { show: Show, passado?: boolean }) => (
     <div className={`bg-zinc-800 border ${passado ? 'border-zinc-800 opacity-60' : 'border-zinc-700 hover:border-emerald-500/50'} p-5 rounded-lg flex flex-col md:flex-row md:items-center gap-4 transition-colors`}>
-      
+
       <div className={`p-3 rounded-md min-w-[150px] text-center shrink-0 ${passado ? 'bg-zinc-900/30' : 'bg-zinc-900/50 border border-zinc-700/50'}`}>
         <span className={`block font-bold capitalize text-sm mb-1 ${passado ? 'text-zinc-500' : 'text-emerald-500'}`}>
           {new Date(show.data_hora).toLocaleDateString('pt-BR', { weekday: 'short' })}
@@ -98,7 +98,7 @@ export function Shows() {
           {new Date(show.data_hora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
-      
+
       <div className="flex-1 min-w-0">
         <h3 className={`font-bold text-lg flex items-center gap-2 mb-2 truncate ${passado ? 'text-zinc-400' : 'text-zinc-100'}`}>
           <MapPin className={`h-4 w-4 shrink-0 ${passado ? 'text-zinc-500' : 'text-emerald-500'}`} />
@@ -113,8 +113,8 @@ export function Shows() {
       </div>
 
       <div className="shrink-0 flex items-center justify-end mt-4 md:mt-0">
-        <button 
-          onClick={() => alert('Em breve: Página de Gestão de Setlist!')}
+        <button
+          onClick={() => navigate(`/shows/${show.id}/setlist`)}
           className={`px-4 py-2 rounded-md text-sm font-semibold transition-colors ${passado ? 'bg-zinc-800 text-zinc-400 hover:text-zinc-300' : 'bg-emerald-600/10 text-emerald-400 hover:bg-emerald-600/20'}`}
         >
           {passado ? 'Ver Setlist' : 'Montar Setlist'}
@@ -144,9 +144,9 @@ export function Shows() {
             Planeie os concertos da <strong className="text-emerald-400">{bandaAtual.nome}</strong>
           </p>
         </div>
-        
-        <button 
-          onClick={() => {setIsModalOpen(true); setErro('');}}
+
+        <button
+          onClick={() => { setIsModalOpen(true); setErro(''); }}
           className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-md font-semibold transition-colors shadow-lg shadow-emerald-900/20"
         >
           <Plus className="h-5 w-5" />
@@ -169,7 +169,7 @@ export function Shows() {
         </div>
       ) : (
         <div className="space-y-8">
-          
+
           {showsFuturos.length > 0 && (
             <section>
               <h2 className="text-xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
@@ -214,34 +214,34 @@ export function Shows() {
             <form onSubmit={handleAgendarShow} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-1">Data e Hora *</label>
-                <input 
-                  required 
-                  type="datetime-local" 
-                  value={dataHora} 
-                  onChange={(e) => setDataHora(e.target.value)} 
-                  className="w-full rounded-md border border-zinc-700 bg-zinc-950 p-2.5 text-zinc-100 focus:border-emerald-500 outline-none [color-scheme:dark]" 
+                <input
+                  required
+                  type="datetime-local"
+                  value={dataHora}
+                  onChange={(e) => setDataHora(e.target.value)}
+                  className="w-full rounded-md border border-zinc-700 bg-zinc-950 p-2.5 text-zinc-100 focus:border-emerald-500 outline-none [color-scheme:dark]"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-1">Local / Evento *</label>
-                <input 
-                  required 
-                  type="text" 
+                <input
+                  required
+                  type="text"
                   placeholder="Ex: Hard Rock Cafe, Festival de Verão..."
-                  value={local} 
-                  onChange={(e) => setLocal(e.target.value)} 
-                  className="w-full rounded-md border border-zinc-700 bg-zinc-950 p-2.5 text-zinc-100 focus:border-emerald-500 outline-none" 
+                  value={local}
+                  onChange={(e) => setLocal(e.target.value)}
+                  className="w-full rounded-md border border-zinc-700 bg-zinc-950 p-2.5 text-zinc-100 focus:border-emerald-500 outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-1">Detalhes (Opcional)</label>
-                <textarea 
+                <textarea
                   placeholder="Informações sobre cachet, horário de montagem, backline partilhado..."
-                  value={descricao} 
-                  onChange={(e) => setDescricao(e.target.value)} 
-                  className="w-full rounded-md border border-zinc-700 bg-zinc-950 p-2.5 text-zinc-100 focus:border-emerald-500 outline-none resize-none min-h-[80px]" 
+                  value={descricao}
+                  onChange={(e) => setDescricao(e.target.value)}
+                  className="w-full rounded-md border border-zinc-700 bg-zinc-950 p-2.5 text-zinc-100 focus:border-emerald-500 outline-none resize-none min-h-[80px]"
                 />
               </div>
 

@@ -11,6 +11,7 @@ import { Repertorio } from './pages/Repertorio'
 import { Integrantes } from './pages/Integrantes'
 import { Ensaios } from './pages/Ensaios'
 import { Shows } from './pages/Shows'
+import { Setlist } from './pages/Setlist'
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/integrantes" element={<Integrantes />} /> 
             <Route path="/ensaios" element={<Ensaios />} />
             <Route path="/shows" element={<Shows />} />
+            <Route path="/shows/:showId/setlist" element={<Setlist />} />
           </Route>
 
           </Routes>

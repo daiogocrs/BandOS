@@ -37,6 +37,7 @@ export function LayoutLogado() {
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isMobileOpen, setIsMobileOpen] = useState(false)
     const [nomeUsuario, setNomeUsuario] = useState('Perfil')
+    const [proximaAtividade, setProximaAtividade] = useState<{ tipo: string, titulo: string, data: string } | null>(null)
 
     useEffect(() => {
         async function carregarPerfil() {
@@ -49,6 +50,52 @@ export function LayoutLogado() {
         }
         carregarPerfil()
     }, [])
+
+    useEffect(() => {
+        async function carregarProximaAtividade() {
+            if (!bandaAtual) {
+                setProximaAtividade(null)
+                return
+            }
+
+            try {
+                const [showsRes, ensaiosRes] = await Promise.all([
+                    api.get(`/api/v1/shows/${bandaAtual.id}`),
+                    api.get(`/api/v1/bandas/${bandaAtual.id}/ensaios`)
+                ])
+
+                const agora = new Date().getTime()
+
+                const showsFuturos = showsRes.data
+                    .filter((s: any) => new Date(s.data_hora).getTime() >= agora)
+                    .map((s: any) => ({ ...s, tipo: 'Show' }))
+
+                const ensaiosFuturos = ensaiosRes.data
+                    .filter((e: any) => new Date(e.data_hora).getTime() >= agora)
+                    .map((e: any) => ({ ...e, tipo: 'Ensaio' }))
+
+                const todasFuturas = [...showsFuturos, ...ensaiosFuturos].sort(
+                    (a, b) => new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime()
+                )
+
+                if (todasFuturas.length > 0) {
+                    const prox = todasFuturas[0]
+                    setProximaAtividade({
+                        tipo: prox.tipo,
+                        titulo: prox.tipo === 'Show' ? prox.local : `Ensaio: ${prox.local}`,
+                        data: prox.data_hora
+                    })
+                } else {
+                    setProximaAtividade(null)
+                }
+            } catch (error) {
+                console.error("Erro ao buscar próxima atividade:", error)
+                setProximaAtividade(null)
+            }
+        }
+
+        carregarProximaAtividade()
+    }, [bandaAtual])
 
     const menuItems: MenuItem[] = [
         { title: 'Dashboard', to: '/dashboard', icon: LayoutDashboard, implemented: true },
@@ -213,8 +260,19 @@ export function LayoutLogado() {
 
                     <div className={`bg-zinc-900/50 border border-zinc-800/60 rounded-md p-3 text-xs transition-all duration-300 ${isCollapsed ? 'hidden opacity-0' : 'opacity-100'}`}>
                         <span className="text-zinc-500 font-bold uppercase tracking-wider block text-[10px] mb-1">Próxima Atividade</span>
-                        <div className="text-zinc-200 font-medium truncate">🎸 Show no Galpão</div>
-                        <div className="text-emerald-500 font-semibold mt-0.5">Sexta às 21h</div>
+
+                        {proximaAtividade ? (
+                            <>
+                                <div className="text-zinc-200 font-medium truncate" title={proximaAtividade.titulo}>
+                                    {proximaAtividade.tipo === 'Show' ? '🎸' : '🎙️'} {proximaAtividade.titulo}
+                                </div>
+                                <div className="text-emerald-500 font-semibold mt-0.5 capitalize">
+                                    {new Date(proximaAtividade.data).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: 'short' })} às {new Date(proximaAtividade.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-zinc-500 italic mt-1">Nenhuma atividade agendada.</div>
+                        )}
                     </div>
 
                     <RenderMenuLinks />
