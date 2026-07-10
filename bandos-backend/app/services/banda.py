@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models import Banda, Integrante, Usuario
-from app.schemas.banda import BandaCreate, IntegranteCreate
+from app.schemas.banda import BandaCreate, IntegranteCreate, BandaUpdate
 
 def criar_banda(db: Session, banda_in: BandaCreate, usuario_criador: Usuario):
 
@@ -57,3 +57,15 @@ def listar_bandas(
         .limit(limit)
         .all()
     )
+
+def atualizar_banda(db: Session, banda_id: int, banda_in: BandaUpdate):
+    banda = db.query(Banda).filter(Banda.id == banda_id).first()
+    if not banda:
+        return None
+    
+    banda.nome = banda_in.nome
+    banda.descricao = banda_in.descricao
+    
+    db.commit()
+    db.refresh(banda)
+    return banda

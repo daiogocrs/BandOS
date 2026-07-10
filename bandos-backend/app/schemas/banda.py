@@ -40,3 +40,7 @@ class BandaResponse(BandaBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class BandaUpdate(BaseModel):
+    nome: str
+    descricao: Optional[str] = None

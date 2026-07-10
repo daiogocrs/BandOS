@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models import Usuario, Banda, Integrante
 from app.api.deps import obter_usuario_atual
-from app.schemas.banda import BandaCreate, BandaResponse, IntegranteCreate, IntegranteResponse
+from app.schemas.banda import BandaCreate, BandaResponse, IntegranteCreate, IntegranteResponse, BandaUpdate
 from app.services import banda as banda_service
 from typing import List
 
@@ -24,12 +24,10 @@ def adicionar_integrante(
     db: Session = Depends(get_db),
     usuario_atual: Usuario = Depends(obter_usuario_atual)
 ):
-    # 1. Verificar se a banda existe
     banda = db.query(Banda).filter(Banda.id == banda_id).first()
     if not banda:
         raise HTTPException(status_code=404, detail="Banda não encontrada")
 
-    # 2. Verificar se quem adiciona é membro/admin da banda (Sua lógica de segurança)
     e_membro = db.query(Integrante).filter(
         Integrante.banda_id == banda_id,
         Integrante.usuario_id == usuario_atual.id
@@ -41,12 +39,10 @@ def adicionar_integrante(
             detail="Acesso negado."
         )
 
-    # 3. Procurar o utilizador pelo Email fornecido
     usuario_convidado = db.query(Usuario).filter(Usuario.email == integrante_in.email).first()
     if not usuario_convidado:
         raise HTTPException(status_code=404, detail="Utilizador não encontrado.")
 
-    # 4. Verificar se o utilizador já está na banda
     ja_na_banda = db.query(Integrante).filter(
         Integrante.banda_id == banda_id,
         Integrante.usuario_id == usuario_convidado.id
@@ -55,7 +51,6 @@ def adicionar_integrante(
     if ja_na_banda:
         raise HTTPException(status_code=400, detail="Este utilizador já faz parte da banda.")
 
-    # 5. Criar a ligação
     novo_integrante = Integrante(
         usuario_id=usuario_convidado.id,
         banda_id=banda_id,
@@ -65,9 +60,8 @@ def adicionar_integrante(
     
     db.add(novo_integrante)
     db.commit()
-    db.refresh(novo_integrante) # Importante para carregar o ID
+    db.refresh(novo_integrante) 
     
-    # Retornar o formato esperado pelo IntegranteResponse
     return {
         "id": novo_integrante.id,
         "usuario_id": novo_integrante.usuario_id,
@@ -94,10 +88,8 @@ def listar_integrantes(
     db: Session = Depends(get_db),
     usuario_atual: Usuario = Depends(obter_usuario_atual)
 ):
-    # Procura todos os integrantes desta banda
     integrantes_db = db.query(Integrante).filter(Integrante.banda_id == banda_id).all()
     
-    # Formata a resposta misturando os dados do Integrante com os dados do Utilizador (Usuario)
     lista_resposta = []
     for intg in integrantes_db:
         lista_resposta.append({
@@ -110,3 +102,18 @@ def listar_integrantes(
         })
         
     return lista_resposta
+
+@router.put("/{banda_id}", response_model=BandaResponse)
+def atualizar_dados_banda(
+    banda_id: int,
+    banda_in: BandaUpdate,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
+    """Atualiza o nome ou descrição da banda."""
+    
+    banda_atualizada = banda_service.atualizar_banda(db=db, banda_id=banda_id, banda_in=banda_in)
+    if not banda_atualizada:
+        raise HTTPException(status_code=404, detail="Banda não encontrada")
+        
+    return banda_atualizada

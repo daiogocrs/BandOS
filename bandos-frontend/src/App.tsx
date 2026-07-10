@@ -13,6 +13,7 @@ import { Ensaios } from './pages/Ensaios'
 import { Shows } from './pages/Shows'
 import { Setlist } from './pages/Setlist'
 import { Equipamentos } from './pages/Equipamentos'
+import { Configuracoes } from './pages/Configuracoes'
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             <Route path="/shows" element={<Shows />} />
             <Route path="/shows/:showId/setlist" element={<Setlist />} />
             <Route path="/equipamentos" element={<Equipamentos />} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
           </Route>
 
           </Routes>

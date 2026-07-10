@@ -1,4 +1,5 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
+from typing import Optional
 
 class UsuarioCreate(BaseModel):
     nome: str
@@ -12,3 +13,10 @@ class UsuarioResponse(BaseModel):
     is_ativo: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+class UsuarioUpdate(BaseModel):
+    nome: str
+
+class SenhaUpdate(BaseModel):
+    senha_atual: str
+    nova_senha: str
