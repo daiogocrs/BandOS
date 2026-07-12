@@ -24,6 +24,10 @@ class IntegranteResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class IntegranteUpdate(BaseModel):
+    papel: Optional[str] = None
+    funcao: Optional[str] = None
+
 
 # ==========================================
 # SCHEMAS DE BANDA

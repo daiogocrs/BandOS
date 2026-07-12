@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models import Usuario, Banda, Integrante
 from app.api.deps import obter_usuario_atual
-from app.schemas.banda import BandaCreate, BandaResponse, IntegranteCreate, IntegranteResponse, BandaUpdate
+from app.schemas.banda import BandaCreate, BandaResponse, IntegranteCreate, IntegranteResponse, BandaUpdate, IntegranteUpdate
 from app.services import banda as banda_service
 from typing import List
 
@@ -117,3 +117,76 @@ def atualizar_dados_banda(
         raise HTTPException(status_code=404, detail="Banda não encontrada")
         
     return banda_atualizada
+
+@router.put("/{banda_id}/integrantes/{integrante_id}", response_model=IntegranteResponse)
+def atualizar_integrante(
+    banda_id: int, 
+    integrante_id: int, 
+    integrante_in: IntegranteUpdate, 
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
+    """Atualiza o papel ou a função de um integrante da banda."""
+    
+    e_membro = db.query(Integrante).filter(
+        Integrante.banda_id == banda_id,
+        Integrante.usuario_id == usuario_atual.id
+    ).first()
+    
+    if not e_membro:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acesso negado.")
+
+    integrante = db.query(Integrante).filter(
+        Integrante.id == integrante_id,
+        Integrante.banda_id == banda_id
+    ).first()
+
+    if not integrante:
+        raise HTTPException(status_code=404, detail="Integrante não encontrado na banda.")
+
+    if integrante_in.papel:
+        integrante.papel = integrante_in.papel
+    if integrante_in.funcao:
+        integrante.funcao = integrante_in.funcao
+        
+    db.commit()
+    db.refresh(integrante)
+    
+    return {
+        "id": integrante.id,
+        "usuario_id": integrante.usuario_id,
+        "nome_usuario": integrante.usuario.nome,
+        "email_usuario": integrante.usuario.email,
+        "papel": integrante.papel,
+        "funcao": integrante.funcao
+    }
+
+@router.delete("/{banda_id}/integrantes/{integrante_id}", status_code=status.HTTP_204_NO_CONTENT)
+def remover_integrante(
+    banda_id: int, 
+    integrante_id: int, 
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
+    """Remove um integrante da banda."""
+    
+    e_membro = db.query(Integrante).filter(
+        Integrante.banda_id == banda_id,
+        Integrante.usuario_id == usuario_atual.id
+    ).first()
+    
+    if not e_membro:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acesso negado.")
+
+    integrante = db.query(Integrante).filter(
+        Integrante.id == integrante_id,
+        Integrante.banda_id == banda_id
+    ).first()
+
+    if not integrante:
+        raise HTTPException(status_code=404, detail="Integrante não encontrado na banda.")
+
+    db.delete(integrante)
+    db.commit()
+    
+    return None
